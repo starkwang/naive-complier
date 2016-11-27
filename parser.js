@@ -13,10 +13,7 @@ function parser(str) {
     }
 
     var word = nextWord();
-    var root = {
-        type: 'root',
-        child: []
-    }
+    var root = new Node('root');
     var p = root;
     if (Expr() && !word) {
         console.log('parse complete');
@@ -30,12 +27,8 @@ function parser(str) {
     **/
     function Expr() {
         console.log('Expr');
-        var node = {
-            type: 'Expr',
-            child: []
-        }
+        var node = new Node('Expr');
         p.child.push(node);
-
         p = node;
         if(Term()){
             p = node;
@@ -52,10 +45,7 @@ function parser(str) {
     **/
     function EPrime() {
         console.log('EPrime');
-        var node = {
-            type: 'EPrime',
-            child: []
-        }
+        var node = new Node('EPrime');
         p.child.push(node);
         p = node;
         if (word == '+' || word == '-') {
@@ -67,7 +57,6 @@ function parser(str) {
             }else{
                 return false;
             }
-            //return Term() ? EPrime() : false;
         }else {
             return true;
         }
@@ -78,10 +67,7 @@ function parser(str) {
     **/
     function Term(){
         console.log('Term');
-        var node = {
-            type: 'Term',
-            child: []
-        };
+        var node = new Node('Term');
         p.child.push(node);
         p = node;
         if(Factor()){
@@ -99,10 +85,7 @@ function parser(str) {
     **/
     function TPrime(){
         console.log('TPrime');
-        var node = {
-            type: 'TPrime',
-            child: []
-        }
+        var node = new Node('TPrime');
         p.child.push(node);
         p = node;
         if(word == '*' || word =='/'){
@@ -114,7 +97,6 @@ function parser(str) {
             }else{
                 return false
             }
-            //return Factor() ? TPrime() : false;
         }else{
             return true;
         }
@@ -126,12 +108,11 @@ function parser(str) {
     function Factor(){
         console.log('Factor');
         var isNumber = /^\d+$/
-        var node = {
-            type: 'Factor',
-            child: [word]
-        }
+        var node = new Node('Factor');
         p.child.push(node);
+        p = node;
         if(isNumber.test(word)){
+            p.child.push(word);
             word = nextWord();
             return true;
         }
