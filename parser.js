@@ -119,6 +119,4 @@ function parser(str) {
     }
 }
 
-var result = parser(['1', '+', '1', '*', '123']);
-
-console.log(result);
+module.exports = parser;
