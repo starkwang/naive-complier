@@ -1,122 +1,91 @@
-function parser(str) {
+function parser(token) {
     var i = 0;
-    //var nextWord = _ => str[i++];
-    function nextWord(){
-        var next = str[i++];
-        console.log(next);
-        return next;
+    function nextWord() {
+        return token[i++];
     }
 
-    function Node(type){
+    function Node(type, operator, child) {
         this.type = type;
+        this.operator = '';
         this.child = [];
     }
 
     var word = nextWord();
     var root = new Node('root');
     var p = root;
+
     if (Expr() && !word) {
-        console.log('parse complete');
         return root;
     } else {
         return false;
     }
 
     /**
-     * Expr -> Term Expr'
-    **/
+     * Expr -> Term + Expr
+     *      |  Term - Expr
+     *      |  Term
+     **/
     function Expr() {
-        console.log('Expr');
         var node = new Node('Expr');
         p.child.push(node);
         p = node;
-        if(Term()){
+        if (Term()) {
             p = node;
-            return EPrime();
-        }else{
-            return false;
-        }
-    }
-
-    /**
-     * Expr' -> + Term Expr'
-     *       |  - Term Expr'
-     *       |  null
-    **/
-    function EPrime() {
-        console.log('EPrime');
-        var node = new Node('EPrime');
-        p.child.push(node);
-        p = node;
-        if (word == '+' || word == '-') {
-            p.child.push(word);
-            word = nextWord();
-            if(Term()){
+            if (word == '+' || word == '-') {
+                node.operator = word;
+                word = nextWord();
                 p = node;
-                return EPrime();
-            }else{
-                return false;
+                return Expr();
+            } else {
+                return true;
             }
-        }else {
-            return true;
         }
     }
 
     /** 
-     * Term -> Factor Term'
-    **/
-    function Term(){
-        console.log('Term');
+     * Term -> Factor * Term
+     *      |  Factor / Term
+     *      |  Factor
+     **/
+    function Term() {
         var node = new Node('Term');
         p.child.push(node);
         p = node;
-        if(Factor()){
+        if (Factor()) {
+            word = nextWord();
             p = node;
-            return TPrime();
-        }else{
-            return false;
+            if (word == '*' || word == '/') {
+                p.operator = word;
+                word = nextWord();
+                return Term();
+            }
+            return true;
         }
     }
 
     /** 
-     * Term' -> * Factor Term'
-     *       |  / Factor Term'
-     *       |  null
-    **/
-    function TPrime(){
-        console.log('TPrime');
-        var node = new Node('TPrime');
+     * Factor -> (Expr)
+     *        |  num
+     **/
+    function Factor() {
+        var node = new Node('Factor');
         p.child.push(node);
         p = node;
-        if(word == '*' || word =='/'){
-            p.child.push(word);
+        if (word == '(') {
             word = nextWord();
-            if(Factor()){
-                p = node;
-                return TPrime();
-            }else{
-                return false
+            if (Expr()) {
+                return word == ')';
             }
-        }else{
+        } else if (isNumber(word)) {
+            p.child.push(word);
             return true;
         }
     }
 
-    /**
-     * Factor -> num 
-    **/
-    function Factor(){
-        console.log('Factor');
-        var isNumber = /^\d+$/
-        var node = new Node('Factor');
-        p.child.push(node);
-        p = node;
-        if(isNumber.test(word)){
-            p.child.push(word);
-            word = nextWord();
-            return true;
-        }
+    function isNumber(word) {
+        return /^\d+$/.test(word);
     }
+
 }
 
 module.exports = parser;

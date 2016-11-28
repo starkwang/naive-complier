@@ -3,7 +3,6 @@ function transformer(root) {
 }
 
 function transformExpr(Expr) {
-    console.log(Expr.child[0]);
     if (Expr.operator) {
         return `(${Expr.operator} ${transformTerm(Expr.child[0])} ${transformExpr(Expr.child[1])})`;
     } else {

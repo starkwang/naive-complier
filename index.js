@@ -1,54 +1,9 @@
-var parser = require('./parser2');
+var tokenizer = require('./tokenizer');
+var parser = require('./parser');
 var transformer = require('./transformer');
 
-var ast = parser(['1', '*', '(', '2', '+', '3', ')', '*', '4', '/', '5']);
+var token = tokenizer('11 * ( 22 + 33 * (1+2) ) * 44 / 55');
+var ast = parser(token);
 var result = transformer(ast);
 
-console.log(JSON.stringify(ast));
 console.log(result);
-
-
-var a = {
-    "type": "Expr",
-    "child": [{
-        "type": "Term",
-        "operator": "*",
-        "child": [{
-            "type": "Factor",
-            "child": ["1"]
-        }, {
-            "type": "Term",
-            "operator": "*",
-            "child": [{
-                "type": "Factor",
-                "child": [{
-                    "type": "Expr",
-                    "operator": "+",
-                    "child": [{
-                        "type": "Term",
-                        "child": [{ "type": "Factor", "child": ["2"] }]
-                    }, {
-                        "type": "Expr",
-                        "child": [{
-                            "type": "Term",
-                            "child": [{ "type": "Factor", "child": ["3"] }]
-                        }, ")"]
-                    }]
-                }]
-            }, {
-                "type": "Term",
-                "operator": "/",
-                "child": [{
-                    "type": "Factor",
-                    "child": ["4"]
-                }, {
-                    "type": "Term",
-                    "child": [{
-                        "type": "Factor",
-                        "child": ["5"]
-                    }]
-                }]
-            }]
-        }]
-    }, null]
-}
