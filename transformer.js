@@ -23,7 +23,6 @@ function transformFactor(Factor) {
     if (Factor.child[0].type == 'Expr') {
         return transformExpr(Factor.child[0])
     } else {
-        console.log(Factor.child[0])
         return Factor.child[0];
     }
 }
