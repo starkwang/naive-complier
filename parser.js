@@ -32,7 +32,7 @@ function parser(token) {
         if (Term()) {
             p = node;
             if (word == '+' || word == '-') {
-                node.operator = word;
+                p.operator = word;
                 word = nextWord();
                 p = node;
                 return Expr();
