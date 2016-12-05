@@ -3,34 +3,34 @@ function transformer(root) {
 }
 
 function transformExpr(Expr) {
-    if (Expr.operator) {
-        // Expr -> Expr + Term
-        //      |  Expr - Term
-        return `(${Expr.operator} ${transformTerm(Expr.child[0])} ${transformExpr(Expr.child[1])})`;
-    } else {
-        // Expr -> Term
-        return transformTerm(Expr.child[0]);
+    var p = Expr;
+    var result = transformTerm(p.child[0]);
+    while (p.child[1].child.length > 0) {
+        var operator = p.child[1].operator;
+        var lastParam = transformTerm(p.child[1].child[0]);
+        result = `(${operator} ${result} ${lastParam})`;
+        p = p.child[1];
     }
+    return result;
 }
 
 function transformTerm(Term) {
-    if (Term.operator) {
-        // Term -> Term * Factor
-        //      |  Term / Factor
-        return `(${Term.operator} ${transformFactor(Term.child[0])} ${transformTerm(Term.child[1])})`;
-    } else {
-        // Term -> Factor
-        return transformFactor(Term.child[0]);
+    var p = Term;
+    var result = transformFactor(p.child[0]);
+    while (p.child[1].child.length > 0) {
+        var operator = p.child[1].operator;
+        var lastParam = transformFactor(p.child[1].child[0]);
+        result = `(${operator} ${result} ${lastParam})`;
+        p = p.child[1];
     }
+    return result;
 }
 
 function transformFactor(Factor) {
     if (Factor.child[0].type == 'Expr') {
-        // Factor -> (Expr)
-        return transformExpr(Factor.child[0])
+        return transformExpr(Factor.child[0]);
     } else {
-        // Factor -> num
-        return Factor.child[0];
+        return Factor.child[0]
     }
 }
 
