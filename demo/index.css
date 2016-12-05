@@ -28,6 +28,7 @@ body{
 #output{
     top: 400px;
     background: #fff;
+    height: auto;
 }
 #output-title{
     top: 350px;
